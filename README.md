@@ -1,0 +1,2 @@
+# ajastin
+A school project
