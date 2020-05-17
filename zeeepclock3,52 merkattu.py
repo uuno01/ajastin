@@ -1,4 +1,4 @@
-
+#kirjastot
 import sys
 import datetime
 import os
@@ -7,7 +7,7 @@ import time
 import threading
 from time import sleep
 from zeep import Client, Settings
-
+#napit testaus tarpeeseen
 try:
     from gpiozero import Button as Btton
     print("Napit")
@@ -26,7 +26,7 @@ except:
     db=None
     eb=None
 
-
+#muuttujien määritys
 settings = Settings(strict=False, xml_huge_tree=True)
 
 jouk={}
@@ -36,6 +36,7 @@ jouki=[]
 lajit={}
 lajitn=[]
 lajiti=[]
+#verkko yhteyden tekemimen
 try:
     
     client = Client("http://taitaja9.gradia.fi/julkaistu5/Service1.svc?wsdl", settings=settings)
@@ -70,38 +71,30 @@ except:
         lajit[lajiti[i]]=lajitn[i]
     yhteys=False
 
-
-#print(result)
-    
-
-
-
-
-#print(result)
-
-
-
-
+#Muutujien määritys kelloille
+#laskinten arvo
 a=0
 b=0
 c=0
 d=0
-kier=0
-
+#onko laskin päällä
 ar=False
 br=False
 cr=False
 dr=False
 er=False
+#Onko kierros mennyt redundantti
 kiert=False
+#Onko Laskin tallettanut
 at=False
 bt=False
 ct=False
 dt=False
+kier=0
 ate=datetime.datetime.now().strftime("%H:%M:%S")
 
 
-
+#Päivitys 
 def tick():
     global a
     global b
@@ -114,7 +107,7 @@ def tick():
     clock4.after(100,tick)
 
 
-
+#ajastimien määritys
 def t1():
     global a,ar,ab,variable1,variable5,at
     if napit==True:
@@ -198,6 +191,7 @@ def t4():
         
 
 
+#Talletuksen määritys
 def muistiin(joukid,lajid,aikaaa):
     
     if chkvar2.get()==1:
@@ -225,11 +219,8 @@ def muistiin(joukid,lajid,aikaaa):
     else:
         print("ei tallennettu tiedostoon")
     
-def tyo(x):
-    print ("value is", lajit[x.get()])
-def tyo2(x):
-    print ("value is", jouk[x.get()])        
-
+    
+#laskinten säikeiden aloitus
 def lask():
     p1 = threading.Thread(target = t1)
     p2 = threading.Thread(target = t2)
@@ -244,26 +235,32 @@ def lask():
 
 
 
-
+#Konsoliin -||- verkkoon laitosta
 def tulos(joukid,lajid,aikaaa):
     koe ={"joukkueid": str(joukid),"lajiID" : str(lajd),"aika": str(aikaaa)}
     tulo = str(client.service.Lisaatulos(koe))
     print(tulo)
     
+#konsoliin valikkojen valintojen tiedon syöttö
+def tyo(x):
+    print ("value is", lajit[x.get()])
+def tyo2(x):
+    print ("value is", jouk[x.get()])    
+#vahingossa kaksin kerroin??
 def tyo(x):
     print(x.get())
     print ("value is", lajit[x.get()])
 def tyo2(x):
     print(x.get())
     print ("value is", jouk[x.get()])
-
+#rajoittaa syöttökentän kokoa
 def raj(syo):
     if len(syo.get()) > 0:
         syo.set(syo.get()[-1])
-    
+#kokonäyttö tilan vaihtaja
 def taysi():
     root.attributes('-fullscreen', not root.attributes('-fullscreen'))
-
+#Redundantti kierros valinta tiedostolle
 def tiekie():
     if chkvar1.get()==1:
         
@@ -273,28 +270,32 @@ def tiekie():
         kr.grid_forget()
         kierrossyo.grid_forget()
     
-    
+#pää pyöritys palanen
 def main():
     global a,b,c,d,ar,br,cr,dr,kier,kiert
+	#Lopettaa laskimet
     kiert=not kiert
     ar=not ar
     br=not br
     cr=not cr
     dr=not dr
-    sleep(1)
+    #odottaa 1 sekunnin varmistamaan että laskimet ovat sammuneet
+	sleep(1)
     if kiert == True:
         kier+=1
-       # mui=open("tulokset.txt","a+")
+		#osa koodista joka olisi laittanut tiedostoon merkkauksen kierroksesta
+		#mui=open("tulokset.txt","a+")
         #mui.write("Kierros: "+str(kier)+"\r\n")
         #mui.close
         duttontxt.set("Pysäytä")
-        lask()
+        
+		lask()
         
     else:
         duttontxt.set("Aloita")
     
     
-
+#Uusii kaikki laskurien arvot jotta 
 def reset():
     global a,b,c,d,ar,br,cr,dr,kier,kiert,redo,at,bt,ct,dt
     duttontxt.set("Aloita")
@@ -314,55 +315,61 @@ def reset():
     dt=False
     
 
-
+#määrittää ohejelman ikkunan ja kutsuu kaikki muut ohjelman osat
 if __name__ == "__main__":
+#Ikkunan luonnin aloitus
     root=Tk()
+	
    # ax=root.winfo_screenheight()
    # ay=root.winfo_screenwidth() 
    # root.geometry(str(ay)+"x"+str(ax)) 
+   
+   #"Tiimit" teksti
     Label(root,text="Tiimit: ").grid(row=0)
-    
+    #tiimi 1
     variable1 = StringVar(root)
-    variable1.set(joukn[0]) 
+    variable1.set(joukn[0])    
     w1 = OptionMenu(root, variable1, *joukn, command=lambda x: tyo2(variable1))
     w1.grid(row=0,column=1)
-    #anchor=CENTER, padx=30
+    #tiimi 2
     variable2 = StringVar(root)
     variable2.set(joukn[0])   
     w2 = OptionMenu(root, variable2, *joukn, command=lambda x: tyo2(variable2))
     w2.grid(row=0,column=2)
-    
+    #tiimi 3
     variable3 = StringVar(root)
     variable3.set(joukn[0])   
     w3 = OptionMenu(root, variable3, *joukn, command=lambda x: tyo2(variable3))
     w3.grid(row=0,column=3)
-    #anchor=CENTER, padx=30 place(x=1000,y=500,anchor="center")
+    #tiimi 4
     variable4 = StringVar(root)
-    variable4.set(joukn[0])  
+    variable4.set(joukn[0]) 
     w4 = OptionMenu(root, variable4, *joukn, command=lambda x: tyo2(variable4))
     w4.grid(row=0,column=4)
-    #lajilista
+    #lajilistan sijoitus
     Label(root,text="Laji:").grid(row=0,column=7,sticky=E)
     variable5 = StringVar(root)
-    
+    #Lajilistan luominen
     if yhteys ==True:
-        variable5.set(lajitn[12])  
+        variable5.set(lajitn[12])   
         w5 = OptionMenu(root, variable5, *lajitn, command=lambda x: tyo(variable5))
     elif yhteys==False:
-        variable5.set(lajiti[0])  
+        variable5.set(lajiti[0]) 
         w5 = OptionMenu(root, variable5, *lajiti, command=lambda x: tyo(variable5))
-
     w5.grid(row=0,column=8)
-    
+    #laskuri 1
     clock1=Label(root, font = ("comic sans", 20,"bold") )
     clock1.grid( row=2, column=1)
+	#laskuri 2
     clock2=Label(root, font = ("comic sans", 20,"bold") ) 
     clock2.grid( row=2, column=2)
-    clock3=Label(root, font = ("comic sans", 20,"bold") )
+    #laskuri ...
+	clock3=Label(root, font = ("comic sans", 20,"bold") )
     clock3.grid( row=2, column=3)
-    clock4=Label(root, font = ("comic sans", 20,"bold") )
+    #laskuri 4
+	clock4=Label(root, font = ("comic sans", 20,"bold") )
     clock4.grid( row=2, column=4)
-
+	#Laskurin aloitus/pysäytys nappi
     duttontxt =StringVar()
     duttontxt.set("Aloita")
     dutton = Button(root,textvariable=duttontxt,command=lambda : main())
@@ -371,23 +378,36 @@ if __name__ == "__main__":
     #full = Button(root,text ="naytonkoko",command=lambda : taysi())
     #full.grid(row=0,column=8)
 
+#kierros?
     kr=Label(root,text="Kierros", font=("comic sans",8))
     kiervar = StringVar() 
     kiervar.set("1")
     kierrossyo = Entry(root, width = 1, textvariable = kiervar)
     kiervar.trace("w", lambda *args: raj(kiervar))
 
+#Laskurin uusinta nappi
     duttore = Button(root,text ="Uusi",command=lambda : reset())
     duttore.grid(row=4,column=7)
     
+	#tallennus valinta
     Label(root,text="Tallennus").grid(row=2,column=8)
-
+	#tiedostoon tallentamisen valinta
     chkvar1=IntVar()
     chk1=Checkbutton(root,text="Tiedostoon", variable=chkvar1)
     chk1.grid(row=3,column=8)
-    #chkvar1.trace("w", lambda *args: tiekie())
     chkvar1.set(1)
-    if napit==False:
+	#Verkkoon tallentamisen valinta
+    if yhteys==True:
+        chkvar2=IntVar(value=1)
+        chk2=Checkbutton(root,text="Verkkoon", variable=chkvar2)
+        chk2.grid(row=4,column=8)
+    else:
+        chkvar2=IntVar()
+
+	#chkvar1.trace("w", lambda *args: tiekie())
+    
+	#Jossei nappeja ole saatavilla korvataan ne ohjelman ikkunaan valintaruuduilla
+	if napit==False:
         nap1v=IntVar(value=1)
         nap1=Checkbutton(root, variable=nap1v)
         nap1.grid(row=3,column=1)
@@ -404,15 +424,8 @@ if __name__ == "__main__":
         nap4=Checkbutton(root, variable=nap4v)
         nap4.grid(row=3,column=4)
     
-    if yhteys==True:
-        chkvar2=IntVar(value=1)
-        chk2=Checkbutton(root,text="Verkkoon", variable=chkvar2)
-        chk2.grid(row=4,column=8)
-    else:
-        chkvar2=IntVar()
-
+	
     tick()
-    
     root.mainloop()
 
 
